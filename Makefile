@@ -36,13 +36,40 @@ anvil :; anvil -m 'test test test test test test test test test test test junk' 
 NETWORK_ARGS := --rpc-url $(RPC_URL) --broadcast --account defaultKeyGanache --sender $(ADDRESS_SENDER) -vvvv
 
 ifeq ($(findstring --network sepolia,$(ARGS)),--network sepolia)
-	NETWORK_ARGS := --rpc-url $(SEPOLIA_RPC_URL) --private-key $(PRIVATE_KEY) --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
+	NETWORK_ARGS := --rpc-url $(SEPOLIA_RPC_URL) --private-key $(TEST_ACCOUNT_PRIVATE_KEY) --broadcast --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
 endif
 
-deploy:
-	@forge script script/DeployOurToken.s.sol:DeployOurToken $(NETWORK_ARGS)
+ifeq ($(findstring --network bnb,$(ARGS)),--network bnb)
+	NETWORK_ARGS := --rpc-url $(BNB_RPC_URL) --private-key $(BNB_ACCOUNT_PRIVATE_KEY) --broadcast -vvvv
+endif
+
+ifeq ($(findstring --network avalanche,$(ARGS)),--network avalanche)
+	NETWORK_ARGS := --rpc-url $(AVAX_RPC_URL) --private-key $(AVAX_ACCOUNT_PRIVATE_KEY) --broadcast  -vvvv
+endif
+# NETWORK_ARGS := --rpc-url $(SEPOLIA_RPC_URL) --broadcast --account defaultKeyGanache --sender $(ADDRESS_SENDER) --verify --etherscan-api-key $(ETHERSCAN_API_KEY) -vvvv
+
+deploy-csctoken-eth:
+	@forge script script/deploy-csc-token-eth.s.sol:DeployETHCSCToken $(NETWORK_ARGS)
+
+deploy-csctoken-bnb:
+	@forge script script/deploy-csc-token-bnb.s.sol:DeployBNBCSCToken $(NETWORK_ARGS)
+
+deploy-csctoken-avalanche:
+	@forge script script/deploy-csc-token-avalanche.s.sol:DeployAvalancheCSCToken $(NETWORK_ARGS)
+	
+deploy-capy-token-celo:
+	forge script script/deploy-capy-token-celo.s.sol:DeployCAPYToken --rpc-url $(RPC_URL_CELO) --account wallet-celo-test  --broadcast -vvvv
+
+deploy-capy-token-sepolia:
+	forge script script/deploy-capy-token-celo.s.sol:DeployCAPYToken --rpc-url $(SEPOLIA_RPC_URL) --private-key $(TEST_ACCOUNT_PRIVATE_KEY) --broadcast -vvvv
 
 # cast abi-encode "constructor(uint256)" 1000000000000000000000000 -> 0x00000000000000000000000000000000000000000000d3c21bcecceda1000000
 # Update with your contract address, constructor arguments and anything else
 verify:
 	@forge verify-contract --chain-id 11155111 --num-of-optimizations 200 --watch --constructor-args 0x00000000000000000000000000000000000000000000d3c21bcecceda1000000 --etherscan-api-key $(ETHERSCAN_API_KEY) --compiler-version v0.8.19+commit.7dd6d404 0x089dc24123e0a27d44282a1ccc2fd815989e3300 src/OurToken.sol:OurToken
+
+
+## DEPLOYMENT
+# make deploy-csctoken-eth ARGS="--network sepolia"
+# make deploy-csctoken-bnb ARGS="--network bnb"
+# make deploy-csctoken-avalanche ARGS="--network avalanche"

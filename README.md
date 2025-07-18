@@ -51,6 +51,24 @@ $ anvil
 $ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
 ```
 
+#### deploy on ethereum
+
+```shell
+$ make deploy-csctoken-eth ARGS="--network sepolia"
+```
+
+#### deploy on avalanche
+
+```shell
+$ make deploy-csctoken-avalanche ARGS="--network avalanche"
+```
+
+#### deploy on bnb
+
+```shell
+$ make deploy-csctoken-bnb ARGS="--network bnb"
+```
+
 ### Cast
 
 ```shell
@@ -64,3 +82,5 @@ $ forge --help
 $ anvil --help
 $ cast --help
 ```
+
+

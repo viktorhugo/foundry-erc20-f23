@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
-pragma solidity 0.8.25;
+pragma solidity 0.8.30;
 
 contract ManualToken {
 
     mapping (address => uint256) private s_balances;
 
-    constructor() {
-        
-    }
+    constructor() {}
 
     function name() public  pure returns (string memory) {
         return "ManualToken";
